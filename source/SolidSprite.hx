@@ -16,6 +16,7 @@ class SolidSprite extends FlxSprite {
         state = State;
         state.solids.add(this);
         pickUpable = true;
+        drag.x = 200;
     }
 
     override public function update() 
