@@ -79,6 +79,7 @@
 	
     <!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
     <assets path="assets/images" rename="images" />
+    <assets path="assets/fonts" rename="fonts" />
     <assets path="assets/maps" rename="maps" />
     <assets path="assets/sounds" if="flash">
         <music path="buttonpress.mp3" id="buttonpress" />

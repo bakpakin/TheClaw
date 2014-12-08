@@ -79,9 +79,9 @@ class BasicState extends FlxState
         add(textBack);
 
         // add effect
-        effect = new FlxSprite(0, 0);
+       /* effect = new FlxSprite(0, 0);
 		var bitmapdata:BitmapData = new BitmapData(FlxG.width, FlxG.height, true, 0x33114411);
-		var scanline:BitmapData = new BitmapData(FlxG.width, 2, true, 0x33001100);
+		var scanline:BitmapData = new BitmapData(FlxG.width, 8, true, 0x33001100);
 		
 		for (i in 0...bitmapdata.height)
 		{
@@ -92,9 +92,10 @@ class BasicState extends FlxState
 		}
 
 		effect.loadGraphic(bitmapdata);        
-		add(effect);
+		add(effect);*/
 
         text = new FlxText(32, 512, 224, "", 16);
+        text.setFormat("fonts/4b03.ttf", 16, 0xFFFFFFFF, "left");
         add(text);
 
         //add stage screen
@@ -161,7 +162,7 @@ class BasicState extends FlxState
 
         time += FlxG.elapsed;
 
-        effect.y = cast(time * 45, Int) % 16;
+        //effect.y = cast(time * 45, Int) % 16;
 
         if (opening) {
             curtain.alpha = Math.max(0, curtain.alpha - 1*FlxG.elapsed);            

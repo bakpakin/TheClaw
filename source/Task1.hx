@@ -29,7 +29,7 @@ class Task1 extends TaskState {
 
     override public function onCurtainUp()
     {
-        bob.velocity.set(-20, 0);        
+        bob.velocity.set(-26, 0);        
         showMessage("Keep Bob from falling off the edge. Place a block in front of him.");        
     }
 
@@ -41,7 +41,7 @@ class Task1 extends TaskState {
     override public function update()
     {
         if (!opening)
-            bob.velocity.x = -20;
+            bob.velocity.x = -26;
         super.update();
         if (!won && !bob.isOnScreen(FlxG.camera)) {
             failed = true;
@@ -60,7 +60,7 @@ class Task1 extends TaskState {
             showedMessage = true;
         }
         if (!showedMessage && failed) {
-            showMessage("You killed bob! Shame on you. Press button to try again.");
+            showMessage("You killed Bob! Shame on you. Press button to try again.");
             showedMessage = true;
         }
         if (redButtonPressed) {

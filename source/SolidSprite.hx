@@ -27,7 +27,7 @@ class SolidSprite extends FlxSprite {
             velocity.set(0, 0);
        } 
        FlxG.overlap(state.map, this, null, FlxObject.separate);
-       state.solids.forEachAlive(overlapWithMe);
+       state.solids.forEach(overlapWithMe);
        yOffset = y - state.claw.y;
        if (pickUpable && !state.claw.isOpen() && Math.abs(x - state.claw.x + 16) < 8 && Math.abs(y - state.claw.y - 32) < height / 2) {
            if (state.claw.justClosed) {
@@ -45,8 +45,13 @@ class SolidSprite extends FlxSprite {
     }
 
     private function overlapWithMe(Sprite: SolidSprite) {
-        if (Sprite != this)
-            FlxG.overlap(this, Sprite, null, FlxObject.separate);
+       // if (Sprite != this)
+            FlxG.overlap(this, Sprite, collisionCallback, FlxObject.separate);
+    }
+
+    public function collisionCallback(This: flixel.FlxBasic, B: flixel.FlxBasic)
+    {
+        
     }
 
 }
