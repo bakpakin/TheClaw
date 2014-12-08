@@ -10,11 +10,21 @@ import flixel.util.FlxSave;
 class Reg
 {
 
+    public static inline var GRAVITY = 400;
+
+    public static var controlsActive: Bool = true;
     public static var redPressed: Bool;
+    public static var redState: Bool;
     public static var upPressed: Bool;
     public static var downPressed: Bool;
     public static var leftPressed: Bool;
     public static var rightPressed: Bool;
+    public static var musicPlaying: Bool;
+
+    public static inline var MAX_X: Float = 736;
+    public static inline var MIN_X: Float = 64;
+    public static inline var MAX_Y: Float = 400;
+    public static inline var MIN_Y: Float = 16;
 
 	/**
 	 * Generic levels Array that can be used for cross-state stuff.

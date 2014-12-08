@@ -10,12 +10,18 @@ import flixel.group.FlxSpriteGroup;
 
 import flixel.effects.FlxSpriteFilter;
 import flash.filters.DropShadowFilter;
+import flash.display.BitmapData;
+import flash.geom.Matrix;
 
 /**
  * A FlxState which can be used for the game's menu.
  */
 class BasicState extends FlxState
 {
+
+    private static inline var BUTTON_SPACING: Float =  96;
+    private static inline var BUTTON_0: Float = 300;
+    private static inline var BUTTON_Y: Float = 512;
 
     public static inline var HAND_SPEED = 1670;
 
@@ -26,11 +32,27 @@ class BasicState extends FlxState
     var rightButton: FlxSprite;
     var upButton: FlxSprite;
     var downButton: FlxSprite;
+    var curtain: FlxSprite;
+    var next: BasicState;
+
+    var text: FlxText;
+    var textBack: FlxSprite;
+    var clawActive: Bool = true;
+    var redButtonPressed: Bool;    
+
+    var effect: FlxSprite;
+    var time: Float;
+
+    public var particles: FlxSpriteGroup;
+
+    private var opening: Bool;
     
-    var hand: FlxSprite;
-    var buttonIndex: Int = 0;
+    public var hand: FlxSprite;
+    public var buttonIndex: Int = 0;
 
     private var wasPressed: Bool = false;
+
+    public var claw: Claw;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -42,6 +64,39 @@ class BasicState extends FlxState
 		FlxG.mouse.visible = false;
 		FlxG.camera.bgColor = 0xFF000000;
 
+		add(claw = new Claw(200, 200));
+
+		particles = new FlxSpriteGroup();
+		add(particles);
+
+		curtain = new FlxSprite(0, 0);
+        curtain.makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
+        opening = true;
+        add(curtain);
+
+		textBack = new FlxSprite(0, 500);
+		textBack.makeGraphic(800, 100, 0xFF000000);
+        add(textBack);
+
+        // add effect
+        effect = new FlxSprite(0, 0);
+		var bitmapdata:BitmapData = new BitmapData(FlxG.width, FlxG.height, true, 0x33114411);
+		var scanline:BitmapData = new BitmapData(FlxG.width, 2, true, 0x33001100);
+		
+		for (i in 0...bitmapdata.height)
+		{
+			if (i % 16 == 0)
+			{
+				bitmapdata.draw(scanline, new Matrix(1, 0, 0, 1, 0, i));
+			}
+		}
+
+		effect.loadGraphic(bitmapdata);        
+		add(effect);
+
+        text = new FlxText(32, 512, 224, "", 16);
+        add(text);
+
         //add stage screen
 		screen = new FlxSprite(0, 0, "images/screenborder.png");
 		screen.scrollFactor.set(0, 0);
@@ -51,33 +106,41 @@ class BasicState extends FlxState
         buttons = new FlxSpriteGroup();
         buttons.scrollFactor.set(0, 0);
 
-        redButton = new FlxSprite(176, 512, "images/screenbutton.png");
+        redButton = new FlxSprite(BUTTON_0, BUTTON_Y, "images/screenbutton.png");
         new FlxSpriteFilter(redButton, 50, 50).addFilter(new DropShadowFilter(5, 45, 0, .75, 10, 10, 1, 1));
         buttons.add(redButton);
 
-        leftButton = new FlxSprite(272, 512, "images/screenarrow.png");
+        leftButton = new FlxSprite(BUTTON_0 + BUTTON_SPACING, BUTTON_Y, "images/screenarrow.png");
         leftButton.flipX = true;
         new FlxSpriteFilter(leftButton, 50, 50).addFilter(new DropShadowFilter(5, 135, 0, .75, 10, 10, 1, 1));        
         buttons.add(leftButton);
 
-        rightButton = new FlxSprite(368, 512, "images/screenarrow.png");
+        rightButton = new FlxSprite(BUTTON_0 + 2*BUTTON_SPACING, BUTTON_Y, "images/screenarrow.png");
         new FlxSpriteFilter(rightButton, 50, 50).addFilter(new DropShadowFilter(5, 45, 0, .75, 10, 10, 1, 1));        
         buttons.add(rightButton); 
 
-        upButton = new FlxSprite(464, 512, "images/screenarrow.png");
+        upButton = new FlxSprite(BUTTON_0 + 3*BUTTON_SPACING, BUTTON_Y, "images/screenarrow.png");
         upButton.angle = -90;
         new FlxSpriteFilter(upButton, 50, 50).addFilter(new DropShadowFilter(5, 135, 0, .75, 10, 10, 1, 1));        
         buttons.add(upButton);
 
-        downButton = new FlxSprite(560, 512, "images/screenarrow.png");
+        downButton = new FlxSprite(BUTTON_0 + 4*BUTTON_SPACING, BUTTON_Y, "images/screenarrow.png");
         downButton.angle = 90;
         new FlxSpriteFilter(downButton, 50, 50).addFilter(new DropShadowFilter(5, 315, 0, .75, 10, 10, 1, 1));        
         buttons.add(downButton);
 
         add(buttons);
 
-        hand = new FlxSprite(176, 512, "images/hand.png");
+        hand = new FlxSprite(redButton.x, redButton.y, "images/hand.png");
         add(hand);
+
+        //music
+        if (!Reg.musicPlaying) {
+            FlxG.sound.playMusic("arcade", 1, true);
+            Reg.musicPlaying = true;
+        }
+
+        time = 0;
     }
 	
 	/**
@@ -94,10 +157,31 @@ class BasicState extends FlxState
 	 */
     override public function update():Void
     {
-        var left = FlxG.keys.anyJustPressed(["A", "LEFT"]);
-        var right = FlxG.keys.anyJustPressed(["D", "RIGHT"]);
-        var press = FlxG.keys.anyPressed(["S", "SPACE", "DOWN"]);
-        var target: Float = buttonIndex * 96 + 176;
+        redButtonPressed = Reg.redPressed;        
+
+        time += FlxG.elapsed;
+
+        effect.y = cast(time * 45, Int) % 16;
+
+        if (opening) {
+            curtain.alpha = Math.max(0, curtain.alpha - 1*FlxG.elapsed);            
+            if (curtain.alpha == 0) {
+                opening = false;
+                onCurtainUp();
+            }
+        } 
+
+        if (next != null) {
+            curtain.alpha = Math.min(1, curtain.alpha + 1*FlxG.elapsed);            
+            if (curtain.alpha == 1) {
+                FlxG.switchState(next);
+            }
+        }
+
+        var left = Reg.controlsActive && FlxG.keys.anyJustPressed(["A", "LEFT"]);
+        var right = Reg.controlsActive && FlxG.keys.anyJustPressed(["D", "RIGHT"]);
+        var press = Reg.controlsActive && FlxG.keys.anyPressed(["S", "SPACE", "DOWN"]);
+        var target: Float = BUTTON_0 + buttonIndex * BUTTON_SPACING;
 
         Reg.redPressed = false;
         Reg.downPressed = false;
@@ -109,6 +193,9 @@ class BasicState extends FlxState
             if (press) {
                 if (!wasPressed) {
                     FlxG.sound.play("buttonpress");    
+                    if (buttonIndex == 0) {
+                        Reg.redState = !Reg.redState;
+                    } 
                 }
                 wasPressed = true;
             } else {
@@ -138,7 +225,7 @@ class BasicState extends FlxState
             }
         }
 
-        var targety: Float = wasPressed ? 518 : 512;
+        var targety: Float = BUTTON_Y + (wasPressed ? 6 : 0);
 
         if (hand.y < targety) {
             hand.y = Math.min(targety, hand.y + FlxG.elapsed * HAND_SPEED);
@@ -163,7 +250,22 @@ class BasicState extends FlxState
             }
         }
 
+        if (clawActive)
+            claw.updateClaw();
         super.update();
     }	
+
+    public function nextScreen(Next: BasicState) {
+        next = Next;
+    }
+    
+    public function showMessage(Message: String) {
+        text.text = Message;
+        FlxG.sound.play("message");
+    }
+
+    public function onCurtainUp() {
+        
+    }
 }
 

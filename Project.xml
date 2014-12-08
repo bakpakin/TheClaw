@@ -2,7 +2,7 @@
 <project>
 	<!------------------------------APPLICATION SETTINGS---------------------------->
 	
-	<app title="ld31" file="ld31" main="Main" version="0.0.1" company="bakpakin" />
+	<app title="The Claw" file="TheClaw" main="Main" version="0.0.1" company="bakpakin" />
 	
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 	<!--or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"!-->
@@ -35,7 +35,7 @@
 	<haxelib name="flixel"/>
 	
 	<!--In case you want to use the addons package-->
-	<!--haxelib name="flixel-addons" /-->
+	<haxelib name="flixel-addons" />
 	
 	<!--In case you want to use the ui package-->
 	<!--haxelib name="flixel-ui"/-->
@@ -79,16 +79,27 @@
 	
     <!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
     <assets path="assets/images" rename="images" />
+    <assets path="assets/maps" rename="maps" />
     <assets path="assets/sounds" if="flash">
         <music path="buttonpress.mp3" id="buttonpress" />
         <music path="buttonrelease.mp3" id="buttonrelease" />
         <music path="handslide.mp3" id="handslide" />
+        <music path="pickup.mp3" id="pickup" />
+        <music path="drop.mp3" id="drop" />
+        <music path="arcade.mp3" id="arcade" />
+        <music path="message.mp3" id="message" />
+        <music path="hurt.mp3" id="hurt" />
     </assets>
 
     <assets path="assets/sounds" unless="flash">
         <sound path="buttonpress.wav" id="buttonpress" />
         <sound path="buttonrelease.wav" id="buttonrelease" />
         <sound path="handslide.wav" id="handslide" />
+        <sound path="pickup.wav" id="pickup" />
+        <sound path="drop.wav" id="drop" />
+        <music path="arcade.ogg" id="arcade" />
+        <sound path="message.wav" id="message" />
+        <sound path="hurt.wav" id="hurt" />
     </assets>
 
     
