@@ -27,7 +27,7 @@
 	
 	<!--------------------------------PATHS SETTINGS-------------------------------->
 	
-	<set name="BUILD_DIR" value="export" />
+	<set name="BUILD_DIR" value="ghpages" />
     <classpath name="source" />
 
 	<!--------------------------------LIBRARIES------------------------------------->

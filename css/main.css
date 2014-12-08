@@ -1,0 +1,17 @@
+body {
+    font-family: 'Poiret One', cursive;
+    font-size: 32px; 
+  color: #22ffff;
+  background-color: #223355;
+  font-size: 1.5em;
+}
+
+.centered {
+  text-align: center;
+	margin: auto auto;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+   user-select: none;
+}
