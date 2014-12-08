@@ -7,6 +7,7 @@ class Solider extends SolidSprite {
     }
 
     override public function update() {
+        velocity.x = -32;
         super.update();
         if (!isOnScreen()) {
             if (x < 0 && Std.is(state, Task3)) {
